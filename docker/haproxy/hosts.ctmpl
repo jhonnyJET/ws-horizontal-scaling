@@ -1,0 +1,3 @@
+{{ range service "ws-app" }}
+{{ .Address }}:{{ .Port }}
+{{ end }}
