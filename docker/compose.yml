@@ -68,7 +68,7 @@ services:
         -consul-addr=consul:8500
         -template="/etc/consul-templates/hosts.ctmpl:/tmp/hosts.map:/bin/sh /etc/consul-templates/update-haproxy.sh"
   ws-app:
-    image: 'jonathas.santos/tracker:jvm.test'
+    image: 'jonathas.santos/tracker:${OS_ARCH}'
     ports:
       - '8088'
     environment:
@@ -83,7 +83,7 @@ services:
       - haproxy
       - consul
   ws-balancer-app:
-    image: 'jonathas.santos/connection_rebalancer_app:jvm.test'
+    image: 'jonathas.santos/connection_rebalancer_app:${OS_ARCH}'
     ports:
       - '8488:8488'
     depends_on:
