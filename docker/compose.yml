@@ -1,6 +1,6 @@
 services:
   socket-proxy:
-    image: tecnativa/docker-socket-proxy
+    image: docker.io/tecnativa/docker-socket-proxy
     container_name: socket-proxy
     user: root
     privileged: true
@@ -21,13 +21,13 @@ services:
       - PING=1
       - POST=1      
   consul:
-    image: hashicorp/consul:latest
+    image: docker.io/hashicorp/consul:latest
     ports:
       - "8500:8500"
     command: agent -server -bootstrap -ui -client=0.0.0.0
 
   registrator:
-    image: gliderlabs/registrator:latest
+    image: docker.io/gliderlabs/registrator:latest
     user: root
     privileged: true      
     volumes:
@@ -37,7 +37,7 @@ services:
       - consul
 
   haproxy:
-    image: haproxy:2.8-alpine
+    image: docker.io/haproxy:2.8-alpine
     container_name: haproxy
     ports:
       - "8000:8000"      # Traffic
@@ -68,7 +68,7 @@ services:
         -consul-addr=consul:8500
         -template="/etc/consul-templates/hosts.ctmpl:/tmp/hosts.map:/bin/sh /etc/consul-templates/update-haproxy.sh"
   ws-app:
-    image: 'jonathas.santos/tracker:${OS_ARCH}'
+    image: 'docker.io/jonathas.santos/ws-app:1.0.4-${OS_ARCH}'
     ports:
       - '8088'
     environment:
@@ -83,17 +83,16 @@ services:
       - haproxy
       - consul
   ws-balancer-app:
-    image: 'jonathas.santos/connection_rebalancer_app:${OS_ARCH}'
+    image: 'docker.io/jonathas.santos/connection_rebalancer_app:1.0.1-${OS_ARCH}'
     ports:
       - '8488:8488'
     depends_on:
       - haproxy
-      - consul          
-  mosquitto:
-    image: 'eclipse-mosquitto:1.6.2'
+      - consul
+  ws-frontend-app:
+    image: 'docker.io/jhonnyvennom/communications_app:1.0.2-${OS_ARCH}'
     ports:
-      - '1883:1883'
-      - '9001:9001'
+      - '8489:80'
     depends_on:
       - haproxy
       - consul
@@ -104,42 +103,5 @@ services:
     depends_on:
       - haproxy
       - consul
-  prometheus:
-    image: 'prom/prometheus:v2.26.0'
-    container_name: prometheus
-    ports:
-      - '9090:9090'
-    volumes:
-      - './prometheus.yml:/etc/prometheus/prometheus.yml'
-    command: '--config.file=/etc/prometheus/prometheus.yml'
-    depends_on:
-      - haproxy
-      - consul
-  grafana:
-    image: grafana/grafana-enterprise
-    container_name: grafana
-    ports:
-      - '3000:3000'
-    volumes:
-      - 'grafana_storage:/var/lib/grafana'
-    depends_on:
-      - prometheus
-      - haproxy
-      - consul
-  jaeger-all-in-one:
-    container_name: jaeger
-    image: 'jaegertracing/all-in-one:latest'
-    ports:
-      - '15000:16686'
-      - '14268:14268'
-      - '4317:4317'
-      - '4318:4318'
-      - '14250:14250'
-    environment:
-      - COLLECTOR_OTLP_ENABLED=true
-    depends_on:
-      - haproxy
-      - consul    
 volumes:
   haproxy-socket: {}
-  grafana_storage: {}  
