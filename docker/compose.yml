@@ -68,7 +68,7 @@ services:
         -consul-addr=consul:8500
         -template="/etc/consul-templates/hosts.ctmpl:/tmp/hosts.map:/bin/sh /etc/consul-templates/update-haproxy.sh"
   ws-app:
-    image: 'docker.io/jonathas.santos/ws-app:1.0.4-${OS_ARCH}'
+    image: 'docker.io/jhonnyvennom/ws-app-server:1.0.9-${OS_ARCH}'
     ports:
       - '8088'
     environment:
@@ -78,24 +78,39 @@ services:
       - SERVICE_8080_IGNORE=true
       - SERVICE_8443_IGNORE=true
       # Optional: Tell Registrator which port to check (if image exposes multiple)
-      - SERVICE_PORT=8088     
+      - SERVICE_PORT=8088
+      - MAX_CONNECTIONS_PER_HOST=${MAX_CONNECTIONS_PER_HOST}
     depends_on:
       - haproxy
       - consul
   ws-balancer-app:
-    image: 'docker.io/jonathas.santos/connection_rebalancer_app:1.0.1-${OS_ARCH}'
+    image: 'docker.io/jhonnyvennom/connection_rebalancer:1.0.10-${OS_ARCH}'
     ports:
       - '8488:8488'
+    environment:
+      - CONNECTION_LIMIT_PER_HOST=${CONNECTION_LIMIT_PER_HOST}
+      - OVERUTILIZED_TOLERANCE_PERCENT=${OVERUTILIZED_TOLERANCE_PERCENT}
+      - UNDERUTILIZED_TOLERANCE_PERCENT=${UNDERUTILIZED_TOLERANCE_PERCENT}
+      - MAX_UTILIZATION_PERCENT=${MAX_UTILIZATION_PERCENT}
+      - MIN_UTILIZATION_PERCENT=${MIN_UTILIZATION_PERCENT}
     depends_on:
       - haproxy
       - consul
   ws-frontend-app:
-    image: 'docker.io/jhonnyvennom/communications_app:1.0.2-${OS_ARCH}'
+    image: 'docker.io/jhonnyvennom/communications_app:1.0.3-${OS_ARCH}'
     ports:
       - '8489:80'
     depends_on:
       - haproxy
       - consul
+  ws-client-app:
+    image: 'docker.io/jhonnyvennom/ws-client-app:1.0.1-${OS_ARCH}'
+    ports:
+      - '8089:8089'
+    depends_on:
+      - haproxy
+      - consul
+      - ws-app      
   redis:
     image: redis
     ports:
