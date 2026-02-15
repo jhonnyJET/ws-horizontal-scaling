@@ -27,7 +27,7 @@ services:
     command: agent -server -bootstrap -ui -client=0.0.0.0
 
   registrator:
-    image: docker.io/gliderlabs/registrator:latest
+    image: docker.io/gliderlabs/registrator:master
     user: root
     privileged: true      
     volumes:
