@@ -104,7 +104,7 @@ services:
       - haproxy
       - consul
   ws-client-app:
-    image: 'docker.io/jhonnyvennom/ws-client-app:1.0.1-${OS_ARCH}'
+    image: 'docker.io/jhonnyvennom/ws-client-app:1.0.2-${OS_ARCH}'
     ports:
       - '8089:8089'
     depends_on:
