@@ -1,5 +1,21 @@
 # Welcome to this PoC!
 
+This Proof concept consists of a container runtime environment demonstrating how to 
+horizontal scale servers/containers based on the number of persistent connections.
+
+Here is a breakdown of the containers we'll spin up and their role:
+
+- socket-proxy: A security-enhanced proxy that runs as a container to control and restrict access to the host's primary Docker socket.
+- consul: A distributed service networking platform providing service discovery, configuration, and security (service mesh).
+- registrator: DNS discovery service for containers. Works with the container runtime socket to discover containers.
+- haproxy: Open-source, high-performance load balancer and proxy server for TCP and HTTP-based applications.
+- haproxy-sidecar: Based off a consul-template image will act as sidecar container to dynamically update haproxy configs to list consul discovered services.
+- ws-app: Our persistent connection application server, developed with java quarkus. [Source code](https://github.com/jhonnyJET/ws-app)
+- ws-balancer-app: Our persistent connection balancer application. This application reads the current state of consul services as well as the connection topology from the redis backplane to make decisions for scaling and rebalancing. [Source Code](https://github.com/jhonnyJET/connection-rebalancer)
+- ws-frontend-app: A very simple react app which the only purpose is to show a visual representation of the persistent connection topology. [Source Code](https://github.com/jhonnyJET/communications_app)
+- ws-client-app: This is an application to simulate websocket clients for the purpose of experimenting with this PoC. This websocket client has retry mechanisms, jitter, multi=threading for batch connecting users. [Source code](https://github.com/jhonnyJET/ws-client-app)
+- redis: An in-memory data structure store. In the context of this PoC we use it to persist connection metadata and also as a Pub/Sub mechanism for our multiple instances to use as a backplane.
+
 Below is the step-by-step guide to spin up the Proof of Concept.
 
 ## 1. Prerequisites
