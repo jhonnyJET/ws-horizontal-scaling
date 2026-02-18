@@ -24,7 +24,7 @@ Ensure you have the following installed and configured:
 - **Container Runtime:** Docker, Podman, etc.
 - **Container Runtime Compose:** Docker Compose, Podman Compose, etc.
 - **Git:** Version control system.
-- **OS:** Unix-based OS (MacOS or Debian-based Linux distros).
+- **OS:** MacOS or Debian-based Linux.
 
 ---
 
@@ -34,16 +34,11 @@ Ensure you have the following installed and configured:
 Visit the [Docker Engine Installation Guide](https://docs.docker.com/engine/install/) and select your operating system to install Docker.
 
 ### 2.2. Permissions
-To allow interactions with the Docker API, you must change the ownership of `docker.sock`. This allows applications to scale containers in and out.
+To allow interactions with the Docker API, you must change the ownership of `docker.sock`. (This allows applications containers to interact with docker API).
 
 **For Docker (Debian-based Linux):**
 ```bash
 sudo chown -R <user_group>:docker /var/run/docker.sock
-```
-
-**For Podman:**
-```bash
-sudo chown -R <user_group>:docker /var/run/podman/podman.sock
 ```
 
 ### 2.3. Install Git
@@ -57,7 +52,7 @@ To install Git, visit the [official installation page](https://git-scm.com/book/
 Run the following commands to clone the repo and navigate to the correct folder:
 
 ```bash
-git clone [https://github.com/jhonnyJET/ws-horizontal-scaling.git](https://github.com/jhonnyJET/ws-horizontal-scaling.git)
+git clone https://github.com/jhonnyJET/ws-horizontal-scaling.git
 cd ws-horizontal-scaling
 cd docker
 ```
@@ -92,15 +87,21 @@ In the same folder used in the previous step, run the compose command matching y
 ```bash
 docker compose up -d
 ```
-
-**Podman:**
-```bash
-podman compose -d
-```
-
 ---
 
-## 5. Happy Testing!!
+## 5. Let's test!
 
-Follow alongside the video or feel free to make your own tests:
-[Video link]
+Here are a few suggestions for tests:
+
+1. Stress test the max number of connections per host (MAX_CONNECTIONS_PER_HOST). 
+Using the curl templates in the template folder try batch connecting more users than the specified MAX_CONNECTIONS_PER_HOST. This will cause the servers to reject connections until fresh new servers are available and ready to receive new connection requests.
+
+2. Happy path. Gradually batch connect more users, once overall utilization goes over (MAX_UTILIZATION_PERCENT + OVERUTILIZED_TOLERANCE_PERCENT), watch new servers/containers come online and receive 
+new connection requests based on Least Connecion Load balancing.
+
+3. Happy path. Gradually batch disconnect users from servers, once overall utilization dips below MIN_UTILIZATION_PERCENT, watch servers/containers being marked as 
+unavailable, thus, the load balancer forwards traffic to the remaining active servers therefore raising overall utilization.
+
+4. Swiss Cheese effect: Batch disconnect users from the same host, leaving the network topology with uneven load to force the rebalancer application to kick in and rebalance the connection topology.
+
+
