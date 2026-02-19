@@ -49,13 +49,19 @@ To install Git, visit the [official installation page](https://git-scm.com/book/
 ## 3. Repository Setup
 
 ### 3.1. Clone and Navigate
-Run the following commands to clone the repo and navigate to the correct folder:
+Run the following commands to clone the repo:
 
 ```bash
 git clone https://github.com/jhonnyJET/ws-horizontal-scaling.git
+```
+
+Navigate to the correct folder:
+
+```bash
 cd ws-horizontal-scaling
 cd docker
 ```
+
 
 ### 3.2. Configuration (.env)
 Edit the `.env` file present in the `docker` folder. **Crucial:** Update the following information:
