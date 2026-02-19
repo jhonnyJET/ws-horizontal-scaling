@@ -99,7 +99,7 @@ services:
       - haproxy
       - consul
   ws-frontend-app:
-    image: 'docker.io/jhonnyvennom/communications_app:1.1.1-${OS_ARCH}'
+    image: 'docker.io/jhonnyvennom/communications_app:1.1.2-${OS_ARCH}'
     ports:
       - '8489:80'
     depends_on:
