@@ -21,14 +21,14 @@ services:
       - PING=1
       - POST=1
     networks:
-      - default      
+      - wshorizontalscaling      
   consul:
     image: docker.io/hashicorp/consul:latest
     ports:
       - "8500:8500"
     command: agent -server -bootstrap -ui -client=0.0.0.0
     networks:
-      - default    
+      - wshorizontalscaling    
 
   registrator:
     image: docker.io/gliderlabs/registrator:master
@@ -39,9 +39,8 @@ services:
     command: "-internal consul://consul:8500"
     depends_on:
       - consul
-      - socket-proxy
     networks:
-      - default      
+      - wshorizontalscaling      
 
   haproxy:
     image: docker.io/haproxy:2.8-alpine
@@ -56,7 +55,7 @@ services:
       # Socket for dynamic commands (The Secret Sauce)
       - haproxy-socket:/var/run/haproxy
     networks:
-      - default      
+      - wshorizontalscaling
 
   haproxy-sidecar:
       build:
@@ -79,7 +78,7 @@ services:
         -consul-addr=consul:8500
         -template="/etc/consul-templates/hosts.ctmpl:/tmp/hosts.map:/bin/sh /etc/consul-templates/update-haproxy.sh"
       networks:
-        - default
+        - wshorizontalscaling
   ws-app:
     image: 'docker.io/jhonnyvennom/ws-app-server:1.1.0-${OS_ARCH}'
     ports:
@@ -97,7 +96,7 @@ services:
       - haproxy
       - consul
     networks:
-      - default      
+      - wshorizontalscaling
   ws-balancer-app:
     image: 'docker.io/jhonnyvennom/connection_rebalancer:1.1.1-${OS_ARCH}'
     ports:
@@ -112,7 +111,7 @@ services:
       - haproxy
       - consul
     networks:
-      - default
+      - wshorizontalscaling
   ws-frontend-app:
     image: 'docker.io/jhonnyvennom/communications_app:1.1.2-${OS_ARCH}'
     ports:
@@ -121,7 +120,7 @@ services:
       - haproxy
       - consul
     networks:
-      - default
+      - wshorizontalscaling
   ws-client-app:
     image: 'docker.io/jhonnyvennom/ws-client-app:1.1.0-${OS_ARCH}'
     ports:
@@ -131,7 +130,7 @@ services:
       - consul
       - ws-app      
     networks:
-      - default
+      - wshorizontalscaling
   redis:
     image: redis
     ports:
@@ -140,9 +139,9 @@ services:
       - haproxy
       - consul
     networks:
-      - default
+      - wshorizontalscaling
 volumes:
   haproxy-socket: {}
 networks:
-  default:
+  wshorizontalscaling:
     driver: bridge
