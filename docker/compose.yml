@@ -19,12 +19,16 @@ services:
       - VERSION=1
       - EVENTS=1
       - PING=1
-      - POST=1      
+      - POST=1
+    networks:
+      - default      
   consul:
     image: docker.io/hashicorp/consul:latest
     ports:
       - "8500:8500"
     command: agent -server -bootstrap -ui -client=0.0.0.0
+    networks:
+      - default    
 
   registrator:
     image: docker.io/gliderlabs/registrator:master
@@ -35,6 +39,9 @@ services:
     command: "-internal consul://consul:8500"
     depends_on:
       - consul
+      - socket-proxy
+    networks:
+      - default      
 
   haproxy:
     image: docker.io/haproxy:2.8-alpine
@@ -48,6 +55,8 @@ services:
       - ./haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
       # Socket for dynamic commands (The Secret Sauce)
       - haproxy-socket:/var/run/haproxy
+    networks:
+      - default      
 
   haproxy-sidecar:
       build:
@@ -69,6 +78,8 @@ services:
       command: >
         -consul-addr=consul:8500
         -template="/etc/consul-templates/hosts.ctmpl:/tmp/hosts.map:/bin/sh /etc/consul-templates/update-haproxy.sh"
+      networks:
+        - default
   ws-app:
     image: 'docker.io/jhonnyvennom/ws-app-server:1.1.0-${OS_ARCH}'
     ports:
@@ -85,6 +96,8 @@ services:
     depends_on:
       - haproxy
       - consul
+    networks:
+      - default      
   ws-balancer-app:
     image: 'docker.io/jhonnyvennom/connection_rebalancer:1.1.1-${OS_ARCH}'
     ports:
@@ -98,6 +111,8 @@ services:
     depends_on:
       - haproxy
       - consul
+    networks:
+      - default
   ws-frontend-app:
     image: 'docker.io/jhonnyvennom/communications_app:1.1.2-${OS_ARCH}'
     ports:
@@ -105,6 +120,8 @@ services:
     depends_on:
       - haproxy
       - consul
+    networks:
+      - default
   ws-client-app:
     image: 'docker.io/jhonnyvennom/ws-client-app:1.1.0-${OS_ARCH}'
     ports:
@@ -113,6 +130,8 @@ services:
       - haproxy
       - consul
       - ws-app      
+    networks:
+      - default
   redis:
     image: redis
     ports:
@@ -120,5 +139,10 @@ services:
     depends_on:
       - haproxy
       - consul
+    networks:
+      - default
 volumes:
   haproxy-socket: {}
+networks:
+  default:
+    driver: bridge
