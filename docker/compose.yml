@@ -36,7 +36,7 @@ services:
     privileged: true      
     volumes:
       - ${DOCKER_SOCK}:/tmp/docker.sock:rw
-    command: "-internal consul://consul:8500"
+    command: "-resync 3 -internal consul://consul:8500"
     depends_on:
       - consul
     networks:
