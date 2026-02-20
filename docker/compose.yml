@@ -98,7 +98,7 @@ services:
     networks:
       - wshorizontalscaling
   ws-balancer-app:
-    image: 'docker.io/jhonnyvennom/connection_rebalancer:1.1.1-${OS_ARCH}'
+    image: 'docker.io/jhonnyvennom/connection_rebalancer:1.1.2-${OS_ARCH}'
     ports:
       - '8488:8488'
     environment:
