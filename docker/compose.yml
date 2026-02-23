@@ -80,7 +80,7 @@ services:
       networks:
         - wshorizontalscaling
   ws-app:
-    image: 'docker.io/jhonnyvennom/ws-app-server:1.1.0-${OS_ARCH}'
+    image: 'docker.io/jhonnyvennom/ws-app-server:1.1.1-${OS_ARCH}'
     ports:
       - '8088'
     environment:
