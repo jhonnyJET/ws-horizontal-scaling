@@ -1,5 +1,9 @@
 
-## Curl command to batch connect users to the ws-app application (Please replace YOUR_HOST by your host address)
+### 1st Test case.
+
+Curl command to batch connect 40 users to the ws-app application AT ONCE. 
+The goal here is to exaust the MAX_CONNECTIONS_PER_HOST and watch the overflow users connect as soon as 
+the scaling algorithm spin up more servers.
 
 ---
 
@@ -52,7 +56,7 @@ curl --location --request POST 'http://<YOUR_HOST>:8089/route/kickstart/ws/batch
 }'
 ```
 
-## Curl command to batch disconnect users from the ws-app application (Please replace YOUR_HOST by your host address)
+## Curl command to batch disconnect all 40 users from the ws-app application (Please replace YOUR_HOST by your host address)
 
 ---
 
@@ -70,7 +74,37 @@ curl --location --request POST 'http://<YOUR_HOST>:8089/route/kickstart/ws/batch
         "user7",
         "user8",
         "user9",
-        "user10"              
+        "user10",
+        "user11",
+        "user12",
+        "user13",
+        "user14",
+        "user15",
+        "user16",
+        "user17",
+        "user18",
+        "user19",
+        "user20",
+        "user21",
+        "user22",
+        "user23",
+        "user24",
+        "user25",
+        "user26",
+        "user27",
+        "user28",
+        "user29",
+        "user30",
+        "user31",
+        "user32",
+        "user33",
+        "user34",
+        "user35",
+        "user36",
+        "user37",
+        "user38",
+        "user39",
+        "user40"
     ]
 }'
 ```
